@@ -35,16 +35,19 @@ let db = new Database(options);
 app.get("/api/computers", (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const result = await db.doQuery([
-        "select id, name, type, processor, amount from computer",
-      ]);
+      const result = await db.doQuery("select * from computer");
       resolve(result.queryResult);
     } catch (err) {
+      console.log(err);
       reject("Not working!");
     }
   })
     .then((result) => res.json(result))
     .catch((err) => res.json(err));
+});
+
+app.all("*", (req: any, res: any) => {
+  res.end("hello");
 });
 
 server.listen(port, host, () =>
