@@ -14,6 +14,7 @@ module.exports = class Database {
 
   constructor(options: Options) {
     this.options = options;
+    this.options.port = Number(options.port);
     this.options.allowPublicKeyRetrieval = true;
   }
 
