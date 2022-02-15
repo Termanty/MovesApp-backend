@@ -1,5 +1,5 @@
 const Database = require("./mariaDB");
-require("dotenv").config({ path: "../.env" });
+require("dotenv").config();
 
 const http = require("http");
 const path = require("path");
@@ -24,11 +24,11 @@ let options: {
   password: string;
   database: string;
 } = {
-  host: process.env.host || "",
-  port: process.env.port || "",
-  user: process.env.user || "",
-  password: process.env.password || "",
-  database: process.env.database || "",
+  host: process.env.DB_HOST || "",
+  port: process.env.DB_PORT || "",
+  user: process.env.DB_USER || "",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_DATABASE || "",
 };
 
 let db = new Database(options);
