@@ -10,6 +10,6 @@ create table moves(
     link varchar(100)
 );
 
-drop user if exists 'test_user'@'localhost';
-create user 'test_user'@'localhost' identified by 'secret';
-grant all privileges on dancemovedb.* to 'test_user'@'localhost';
+drop user if exists 'dancer'@'localhost';
+create user 'dancer'@'localhost' identified by 'D0llyL1inkUp';
+grant all privileges on dancemovedb.* to 'dancer'@'localhost';
