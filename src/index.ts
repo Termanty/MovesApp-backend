@@ -1,3 +1,6 @@
+import { resolve } from "path";
+import { resourceUsage } from "process";
+
 const Database = require("./mariaDB");
 require("dotenv").config();
 
@@ -62,19 +65,34 @@ app.get("/oneMove?", (req: any, res: any) => {
     .catch((err) => res.json(err));
 });
 
-// app.PUT/POST("/addOrUpdate", (req: any, res: any) => {
-//   return new Promise(async (resolve, reject) => {
-//     try {
-//       const result = await db.doQuery("CORRECTLY FORMED SQL STATEMENTS WITH THE MODIFIED DATA");
-//       resolve(result.queryResult);
-//     } catch (err) {
-//       console.log(err);
-//       reject("Not working!");
-//     }
-//   })
-//     .then((result) => res.json(result))
-//     .catch((err) => res.json(err));
-// }); */
+app.post("/addNew",(req:any,res:any)=>{
+  
+  const newMove = req.body;
+  return new Promise(async (resolve,reject)=>{
+    try{
+      const parameters = [
+        +newMove.id,
+
+        newMove.movename,
+        
+        newMove.creator || '',
+        
+        newMove.hox || '',
+        
+        newMove.link || ''
+      ]
+      const result = await db.doQuery('insert into moves (id,movename,creator,hox,link) values (?,?,?,?,?)',parameters);
+      resolve(result.queryResult);
+    } catch(err){
+      console.log(err);
+      reject("Not added");
+    }
+  }).then((result)=>res.json(result))
+    .catch((err)=>res.json(err));
+});
+
+
+
 
 app.all("*", (req: any, res: any) => {
   res.end("hello");
