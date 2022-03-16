@@ -2,10 +2,11 @@
 
 Node/Express backend for dance moves application.
 
-## to run
+## TO RUM
 
 ```shell
 npm install
+npm start
 ```
 
 ## npm and TypeScript initialisation
@@ -26,11 +27,6 @@ tsc --init
 npm install express
 npm install typescript ts-node @types/node @types/express --save-dev
 ```
-
-### package.json file
-
-- "scripts": {
-  "start": "ts-node index.ts",
 
 ### tsconfig file
 
