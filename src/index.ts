@@ -50,8 +50,8 @@ app.get("/allMoves", (req: any, res: any) => {
     .catch((err) => res.json(err));
 });
 
-app.get("/oneMove?", (req: any, res: any) => {
-  const id = req.query.id;
+app.get("/oneMove/:id", (req: any, res: any) => {
+  const id: number = req.params.id;
   return new Promise(async (resolve, reject) => {
     try {
       const result = await db.doQuery("select * from moves where id = ?", id);
