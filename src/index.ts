@@ -1,121 +1,96 @@
-import { resolve } from "path";
-import { resourceUsage } from "process";
+import http from "http";
+import express from "express";
+import cors from "cors";
+import Database from "./mariaDB";
+import {Application,Request,Response} from "express";
+import { Settings } from "./settings";
+import Printer from "./controllers/createPrinter";
+import Options from "./models/options";
 
-const Database = require("./mariaDB");
 require("dotenv").config();
 
-const http = require("http");
-const path = require("path");
-const cors = require("cors");
-
-const express = require("express");
-const app = express();
-
-const port: number = 4000;
-const host: string = "localhost";
-
+const app: Application= express();
 const server = http.createServer(app);
+let print = new Printer(Settings.port, Settings.host);
 
 app.use(cors());
 app.use(express.json());
 
-let options: {
-  host: string;
-  port: string;
-  user: string;
-  password: string;
-  database: string;
-} = {
+let options:Options={
   host: process.env.DB_HOST || "",
-  port: process.env.DB_PORT || "",
+  port: +process.env.DB_PORT! || 0,
   user: process.env.DB_USER || "",
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_DATABASE || "",
-};
+  allowPublicKeyRetrieval: true
+  };
 
 let db = new Database(options);
 
-app.get("/allMoves", (req: any, res: any) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await db.doQuery("select * from moves");
-      resolve(result.queryResult);
-    } catch (err) {
-      console.log(err);
-      reject("Not working!");
-    }
-  })
-    .then((result) => res.json(result))
-    .catch((err) => res.json(err));
+app.get("/allMoves", (req: Request, res: Response) => {
+  db.doQuery("select * from moves")
+    .then((result: any ) => res.json(result.queryResult))
+    .catch(() => res.json("Not working!"));
+ });
+
+app.get("/oneMove/:id", (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  db.doQuery("select * from moves where id = ?", id)
+  .then((result: any ) => res.json(result.queryResult))
+  .catch(() => res.json("Not working!"));
 });
 
-app.get("/oneMove/:id", (req: any, res: any) => {
-  const id: number = req.params.id;
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await db.doQuery("select * from moves where id = ?", id);
-      resolve(result.queryResult);
-    } catch (err) {
-      console.log(err);
-      reject("Not working!");
-    }
-  })
-    .then((result) => res.json(result))
-    .catch((err) => res.json(err));
-});
-
-app.post("/updateMove/", (req: any, res: any) => {
+app.post("/updateMove/", (req: Request, res: Response) => {
   const move = req.body;
-  const parameters = [
+  const parameters : [
+    string,
+    string | boolean,
+    string | boolean,
+    string | boolean,
+    number
+    ]= [
     move.movename,
     move.creator || "",
     move.hox || "",
     move.link || "",
     +move.id,
   ];
-
-  return new Promise(async (resolve, reject) => {
-    try {
-      const result = await db.doQuery(
-        "update moves set movename=?, creator=?, hox=?, link=?" + "where id=?",
-        parameters
-      );
-      resolve("update status : rowsChanged =" + result.queryResult.rowsChanged);
-    } catch (err) {
-      reject("Could not update" + err);
-    }
-  }).then((result) => res.json(result));
+   db.doQuery(
+    "update moves set movename=?, creator=?, hox=?, link=?" + "where id=?",
+    parameters)
+  .then((result: any ) => res.json("update status : rowsChanged =" + result.queryResult.rowsChanged))
+  .catch(() => res.json("Not working!"));
 });
 
-app.post("/addNew", (req: any, res: any) => {
+app.post("/addNew", (req: Request, res: Response) => {
   const newMove = req.body;
-  return new Promise(async (resolve, reject) => {
-    try {
-      const parameters = [
+  const parameters : [
+    number,
+    string,
+    string | boolean,
+    string | boolean,
+    string | boolean,
+    ]= [
         +newMove.id,
         newMove.movename,
         newMove.creator || "",
         newMove.hox || "",
         newMove.link || "",
       ];
-      const result = await db.doQuery(
+      db.doQuery(
         "insert into moves (id,movename,creator,hox,link) values (?,?,?,?,?)",
         parameters
-      );
-      resolve(result.queryResult);
-    } catch (err) {
-      console.log(err);
-      reject("Not added");
-    }
-  })
-    .then((result) => res.json(result))
-    .catch((err) => res.json(err));
+      )
+      .then((result: any ) => res.json("update status : rowsChanged =" + result.queryResult.rowsChanged))
+      .catch(() => res.json("Not working!"));
+      
 });
 
-app.all("*", (req: any, res: any) => {
+app.all("*", (req: Request, res: Response) => {
   res.end("hello");
 });
 
-server.listen(port, host, () =>
-  console.log(`Server ${host}:${port} available.`)
+
+server.listen(Settings.port, Settings.host, ():void=>
+  console.log(print.messagePrint())
 );

@@ -1,16 +1,7 @@
-const mariadb = require("mariadb");
-
-type Options = {
-  host: string;
-  port: number;
-  user: string;
-  password: string;
-  database: string;
-  allowPublicKeyRetrieval: boolean;
-};
-
-module.exports = class Database {
-  private options;
+import mariadb from 'mariadb';
+import Options from "./models/options";
+export default class Database {
+private options;
 
   constructor(options: Options) {
     this.options = options;
@@ -18,7 +9,7 @@ module.exports = class Database {
     this.options.allowPublicKeyRetrieval = true;
   }
 
-  doQuery(sql: string, parameters: any[]) {
+  doQuery(sql: string, parameters?: any[]|string) {
     return new Promise(async (resolve, reject) => {
       let connection;
       try {

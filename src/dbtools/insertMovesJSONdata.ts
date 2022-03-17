@@ -13,24 +13,20 @@
 // 		"Id": 1
 // 	},
 // ]
+import MariaDb from '../mariaDB';
+import Options from "../models/options";
 
-const MariaDb = require('../mariaDB');
-const jsondb = require('./db.json');
+const jsondb = require('../../db.json');
 require('dotenv').config();
 
-type DbOptions = {
-	host: string;
-	port: string;
-	user: string;
-	password: string;
-	database: string;
-};
-const dbOptions: DbOptions = {
+
+const dbOptions: Options = {
 	host: process.env.DB_HOST || '',
-	port: process.env.DB_PORT || '',
+	port: +process.env.DB_PORT! || 0,
 	user: process.env.DB_USER || '',
 	password: process.env.DB_PASSWORD || '',
 	database: process.env.DB_DATABASE || '',
+	allowPublicKeyRetrieval: true
 };
 
 const database = new MariaDb(dbOptions);
