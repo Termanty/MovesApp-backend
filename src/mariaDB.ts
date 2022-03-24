@@ -1,7 +1,8 @@
-import mariadb from 'mariadb';
+import mariadb from "mariadb";
 import Options from "./models/options";
+
 export default class Database {
-private options;
+  private options;
 
   constructor(options: Options) {
     this.options = options;
@@ -9,7 +10,7 @@ private options;
     this.options.allowPublicKeyRetrieval = true;
   }
 
-  doQuery(sql: string, parameters?: any[]|string) {
+  doQuery(sql: string, parameters?: any[] | string) {
     return new Promise(async (resolve, reject) => {
       let connection;
       try {
@@ -39,4 +40,4 @@ private options;
       }
     });
   }
-};
+}
