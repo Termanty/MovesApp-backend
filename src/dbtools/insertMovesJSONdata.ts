@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // INSTRUCTIONS:
 // This is a tool to import the moves from db.json to our mySql database
@@ -13,49 +13,48 @@
 // 		"Id": 1
 // 	},
 // ]
-import MariaDb from '../mariaDB';
+import MariaDb from "../mariaDB";
 import Options from "../models/options";
 
-const jsondb = require('../../db.json');
-require('dotenv').config();
-
+const jsondb = require("../../db.json");
+require("dotenv").config();
 
 const dbOptions: Options = {
-	host: process.env.DB_HOST || '',
-	port: +process.env.DB_PORT! || 0,
-	user: process.env.DB_USER || '',
-	password: process.env.DB_PASSWORD || '',
-	database: process.env.DB_DATABASE || '',
-	allowPublicKeyRetrieval: true
+  host: process.env.DB_HOST || "",
+  port: +process.env.DB_PORT! || 0,
+  user: process.env.DB_USER || "",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_DATABASE || "",
+  allowPublicKeyRetrieval: true,
 };
 
 const database = new MariaDb(dbOptions);
 
 async function add(moves: any[]) {
-	for (let move of moves) {
-		try {
-			const parameters: [
-				number,
-				string,
-				string | boolean,
-				string | boolean,
-				string | boolean
-			] = [
-				move.Id,
-				move.Move,
-				move.Creator === '?' ? null : move.Creator || null,
-				move.HOX || null,
-				move.Link || null,
-			];
+  for (let move of moves) {
+    try {
+      const parameters: [
+        number,
+        string,
+        string | boolean,
+        string | boolean,
+        string | boolean
+      ] = [
+        move.Id,
+        move.Move,
+        move.Creator === "?" ? null : move.Creator || null,
+        move.HOX || null,
+        move.Link || null,
+      ];
 
-			const sql =
-				'insert into moves (id,movename,creator,hox,link) values(?,?,?,?,?)';
+      const sql =
+        "insert into moves (id,movename,creator,hox,link) values(?,?,?,?,?)";
 
-			const status = await database.doQuery(sql, parameters);
-			console.log('Status', status);
-		} catch (err) {
-			console.log(err);
-		}
-	}
+      const status = await database.doQuery(sql, parameters);
+      console.log("Status", status);
+    } catch (err) {
+      //   console.log(err);
+    }
+  }
 }
 add(jsondb);
