@@ -29,7 +29,10 @@ let db = new Database(options);
 
 app.get("/allMoves", (req: Request, res: Response) => {
   db.doQuery("select * from moves")
-    .then((result: any) => res.json(result.queryResult))
+    .then((result: any) => {
+      console.log("Fetching all moves from db");
+      res.json(result.queryResult);
+    })
     .catch(() => res.json("Not working!"));
 });
 
@@ -40,7 +43,7 @@ app.get("/oneMove/:id", (req: Request, res: Response) => {
     .catch(() => res.json("Not working!"));
 });
 
-app.post("/updateMove/", (req: Request, res: Response) => {
+app.put("/updateMove", (req: Request, res: Response) => {
   const move = req.body;
   const parameters: [
     string,
@@ -56,13 +59,19 @@ app.post("/updateMove/", (req: Request, res: Response) => {
     +move.id,
   ];
   db.doQuery(
-    "update moves set movename=?, creator=?, hox=?, link=?" + "where id=?",
+    "update moves set movename=?, creator=?, hox=?, link=? " + "where id=?",
     parameters
   )
-    .then((result: any) =>
-      res.json("update status : rowsChanged =" + result.queryResult.rowsChanged)
-    )
-    .catch(() => res.json("Not working!"));
+    .then((result: any) => {
+      console.log("Updated: ", parameters);
+      res.json(
+        "update status : rowsChanged =" + result.queryResult.rowsChanged
+      );
+    })
+    .catch(() => {
+      console.log("Error: update to db failed -", parameters);
+      res.json("Not working!");
+    });
 });
 
 app.post("/addNew", (req: Request, res: Response) => {
