@@ -3,11 +3,11 @@ create database dancemovedb;
 use dancemovedb;
 
 create table moves(
-    id integer not null primary key,
+    id integer not null primary key auto_increment,
     movename varchar(30) not null,
-    creator varchar(30),
-    hox varchar(200),
-    link varchar(100)
+    creator varchar(30) default '',
+    hox varchar(200) default '',
+    link varchar(100) default ''
 );
 
 drop user if exists 'test_user'@'localhost';
