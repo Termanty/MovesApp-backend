@@ -20,7 +20,7 @@ export default class Database {
           reject("Query Error");
         } else if (typeof queryResult.affectedRows === "undefined") {
           delete queryResult.meta;
-          console.log(queryResult);
+          // console.log(queryResult);
           resolve({ queryResult, resultSet: true });
         } else {
           console.log(queryResult);
